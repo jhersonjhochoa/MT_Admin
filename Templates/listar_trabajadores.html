@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card mb-3">
+  <div class="card-header">
+    <i class="fas fa-table"></i>
+    Listado de trabajadores</div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-bordered" id="trabajadoresTable" width="100%" cellspacing="0">
+        <thead>
+          <tr>
+            <th>Dni</th>
+            <th>Apellidos</th>
+            <th>Nombres</th>
+            <th>Pais</th>
+            <th>F. Nacimiento</th>
+            <th>Opciones</th>
+          </tr>
+        </thead>
+        <tfoot>
+          <tr>
+            <th>Dni</th>
+            <th>Apellidos</th>
+            <th>Nombres</th>
+            <th>Pais</th>
+            <th>F. Nacimiento</th>
+            <th>Opciones</th>
+          </tr>
+        </tfoot>
+        <tbody>
+          {% if object_list %}
+          {% for t in object_list %}
+          <tr>
+            <td>{{t.dni}}</td>
+            <td>{{t.apellidos}}</td>
+            <td>{{t.nombres}}</td>
+            <td>{{t.pais}}</td>
+            <td>{{t.fechaNacimiento}}</td>
+            <td><a class="btn btn-primary viewLink" href="{% url 'gestionTrabajadores:api_trabajador'%}?dni={{t.dni}}&format=json ">Ver</a>
+            <a class="btn btn-primary" href="{% url 'gestionTrabajadores:update_trabajador' t.dni %}">Editar</a>
+            <a class="btn btn-danger" href="{% url 'gestionTrabajadores:delete_trabajador' t.dni %}">Eliminar</a></td>
+          </tr>
+          {% endfor %}
+          {% else %}
+          <h2>No hay registros de trabajadores</h2>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block morejs %}
+<script type="text/javascript">
+  $('.viewLink').click(function(e){
+    e.preventDefault();
+    var link = $(this).attr('href');
+    $.ajax({
+      type: 'GET',
+      url: link,
+      success: function (data) {
+        myObj = data[0];
+        dni = myObj["dni"];
+        apellidos = myObj["apellidos"];
+        nombres = myObj["nombres"];
+        foto = myObj["foto"];
+
+        $('#UserModalLabel').html('Trabajador DNI: '+dni);
+        $('#UserModalBody').html('<center><img style="max-height: 25rem; width: auto" src="'+foto+'" /></center>');
+        $('#UserModalFooter').html(nombres+' '+apellidos);
+        $('#UserModal').modal();
+
+      },
+      error: function (s, x, e){
+        alert(e);
+      }
+    });
+  });
+</script>
+{% endblock %}

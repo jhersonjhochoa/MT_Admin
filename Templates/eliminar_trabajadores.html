@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<form method="post">
+  {% csrf_token %}
+  {{form.as_p}}
+  <h3>¿Desea eliminar el Trabajador con DNI: {{object.dni}}?</h3>
+  <button class="btn btn-danger" type="submit">Eliminar</button>
+  <a class="btn btn-primary" href="{% url 'gestionTrabajadores:list_trabajador' %}">Cancelar</a>
+</form>
+{% endblock %}
